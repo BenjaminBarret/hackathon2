@@ -115,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements FlingChiefListene
 
             }
         });
+
         mItems.add(newItem());
         mItems.add(newItem());
         mItems.add(newItem());
