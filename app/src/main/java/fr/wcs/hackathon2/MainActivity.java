@@ -1,5 +1,9 @@
 package fr.wcs.hackathon2;
 
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,61 +21,46 @@ import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
-    private String mSide;
+    FragmentPagerAdapter adapterViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //API
-        final RequestQueue requestQueue = Volley.newRequestQueue(this);
-        String url = "https://cdn.rawgit.com/akabab/superhero-api/0.2.0/api/all.json";
 
-        final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
-                Request.Method.GET, url, null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        try {
-                            for( int g=0; g<response.length();g++) {
-                                JSONObject stars = (JSONObject) response.get(g);
-                                int id = stars.getInt("id");
-                                double height = stars.getDouble("height");
-                                int mass = stars.getInt("mass");
-                                String name = stars.getString("name");
-                                String gender = stars.getString("gender");
-                                String homeworld = stars.getString("homeworld");
-                                String specie = stars.getString("species");
-                                String image = stars.getString("image");
-                                String haircolor = stars.getString("haircolor");
-                                String eyecolor = stars.getString("eyecolor");
-                                String skincolor = stars.getString("skincolor");
-                                JSONObject affiliations = stars.getJSONObject("affiliations");
-                                if (affiliations.has("Galactic Empire") || affiliations.has("Sith") || affiliations.has("Confederacy of Independent Systems")) {
-                                    mSide = "The Dark Side of The Force";
-                                }  else if (affiliations.has("Jedi Order") || affiliations.has("New Republic") || affiliations.has("Resistance")) {
-                                    mSide = "The Light Side of The Force";
-                                } else {
-                                    mSide = "Neutre";
-                                }
-                                StarModel starHeroes = new StarModel(id, height, mass, name, gender, homeworld, specie, image, haircolor, eyecolor, skincolor, mSide);
-                            }
-                        } catch (JSONException e){
-                            e.printStackTrace();
-                        }
-                    }
-                },
 
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Afficher l'erreur
-                        Log.d("VOLLEY_ERROR", "onErrorResponse: " + error.getMessage());
-                    }
-                }
-        );
-        // On ajoute la requête à la file d'attente
-        requestQueue.add(jsonArrayRequest);
+        ViewPager viewPager = findViewById(R.id.viewPager);
+
+        adapterViewPager = new MyPagerAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(adapterViewPager);
+        viewPager.setCurrentItem(0);
+    }
+
+    public static class MyPagerAdapter extends FragmentPagerAdapter {
+
+        public MyPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            switch (position){
+                case 0 :
+                    return AcceuilFragment.newInstance();
+                case 1 :
+                    return ChatFragment.newInstance();
+                case 2 :
+                    return SearchFragment.newInstance();
+
+
+            }
+            return null;
+        }
+
+        @Override
+        public int getCount() {
+            return 3;
+        }
     }
 }

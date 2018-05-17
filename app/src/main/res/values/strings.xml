@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Hackathon2</string>
+    <string-array name="choose">
+        <item>Veuillez Selectionner ...</item>
+        <item>Homme</item>
+        <item>Femme</item>
+    </string-array>
 </resources>
