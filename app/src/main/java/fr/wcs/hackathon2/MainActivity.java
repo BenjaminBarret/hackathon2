@@ -1,5 +1,7 @@
 package fr.wcs.hackathon2;
 
+import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -7,6 +9,9 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
+import android.view.View;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -14,53 +19,128 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.db.rossdeckview.FlingChief;
+import com.db.rossdeckview.FlingChiefListener;
+import com.db.rossdeckview.RossDeckView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.List;
 
-    FragmentPagerAdapter adapterViewPager;
+public class MainActivity extends AppCompatActivity implements FlingChiefListener.Actions, FlingChiefListener.Proximity {
+
+    private final static int DELAY = 1000;
+
+    private List<Pair<String, Integer>> mItems;
+
+    private DeckAdapter mAdapter;
+
+    private View mLeftView;
+
+    private View mUpView;
+
+    private View mRightView;
+
+    private View mDownView;
+
+    private int[] mColors;
+
+    private int mCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mColors  = getResources().getIntArray(R.array.cardsBackgroundColors);
+        mItems = new ArrayList<>();
 
+        mItems.add(newItem());
+        mItems.add(newItem());
+        mItems.add(newItem());
+        mAdapter = new DeckAdapter(this, mItems);
 
-        ViewPager viewPager = findViewById(R.id.viewPager);
+        RossDeckView mDeckLayout = (RossDeckView) findViewById(R.id.decklayout);
+        mDeckLayout.setAdapter(mAdapter);
+        mDeckLayout.setActionsListener(this);
+        mDeckLayout.setProximityListener(this);
 
-        adapterViewPager = new MyPagerAdapter(getSupportFragmentManager());
-        viewPager.setAdapter(adapterViewPager);
-        viewPager.setCurrentItem(0);
+        mLeftView = findViewById(R.id.left);
+        mUpView = findViewById(R.id.up);
+        mRightView = findViewById(R.id.right);
+        mDownView = findViewById(R.id.down);
     }
 
-    public static class MyPagerAdapter extends FragmentPagerAdapter {
+    @Override
+    public boolean onDismiss(@NonNull FlingChief.Direction direction, @NonNull View view) {
 
-        public MyPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
+        Toast.makeText(this, "Dismiss to " + direction, Toast.LENGTH_SHORT).show();
+        return true;
+    }
 
-        @Override
-        public Fragment getItem(int position) {
-            switch (position){
-                case 0 :
-                    return AcceuilFragment.newInstance();
-                case 1 :
-                    return ChatFragment.newInstance();
-                case 2 :
-                    return SearchFragment.newInstance();
+    @Override
+    public boolean onDismissed(@NonNull View view) {
+
+        mItems.remove(0);
+        mAdapter.notifyDataSetChanged();
+        newItemWithDelay(DELAY);
+        return true;
+    }
+
+    @Override
+    public boolean onReturn(@NonNull View view) {
+        return true;
+    }
+
+    @Override
+    public boolean onReturned(@NonNull View view) {
+        return true;
+    }
+
+    @Override
+    public boolean onTapped() {
+        Toast.makeText(this, "Tapped", Toast.LENGTH_SHORT).show();
+        return true;
+    }
+
+    @Override
+    public boolean onDoubleTapped() {
+        Toast.makeText(this, "Double tapped", Toast.LENGTH_SHORT).show();
+        return true;
+    }
+
+    @Override
+    public void onProximityUpdate(@NonNull float[] proximities, @NonNull View view) {
+
+        mLeftView.setScaleY((1 - proximities[0] >= 0) ? 1 - proximities[0] : 0);
+        mUpView.setScaleX((1 - proximities[1] >= 0) ? 1 - proximities[1] : 0);
+        mRightView.setScaleY((1 - proximities[2] >= 0) ? 1 - proximities[2] : 0);
+        mDownView.setScaleX((1 - proximities[3] >= 0) ? 1 - proximities[3] : 0);
+    }
 
 
+    private Pair<String, Integer> newItem(){
+
+        Pair<String, Integer> res = new Pair<>("Card" + Integer.toString(mCount), mColors[mCount]);
+        mCount = (mCount >= mColors.length - 1) ? 0 : mCount + 1;
+        return res;
+    }
+
+
+    private void newItemWithDelay(int delay){
+
+        final Pair<String, Integer> res = newItem();
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mItems.add(res);
+                mAdapter.notifyDataSetChanged();
             }
-            return null;
-        }
-
-        @Override
-        public int getCount() {
-            return 3;
-        }
+        }, delay);
     }
+
 }
