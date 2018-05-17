@@ -15,6 +15,8 @@ public class StarModel {
     private String skincolor;
     private String side;
 
+    public StarModel() {}
+
     public StarModel(int id, double height, int mass, String name, String gender, String homeworld, String species, String image, String haircolor, String eyecolor, String skincolor, String side) {
         this.id = id;
         this.height = height;

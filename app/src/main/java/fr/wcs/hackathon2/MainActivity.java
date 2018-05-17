@@ -22,6 +22,13 @@ import com.android.volley.toolbox.Volley;
 import com.db.rossdeckview.FlingChief;
 import com.db.rossdeckview.FlingChiefListener;
 import com.db.rossdeckview.RossDeckView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements FlingChiefListene
 
     private final static int DELAY = 1000;
 
-    private List<Pair<String, Integer>> mItems;
+    private List<Pair<String, String>> mItems;
 
     private DeckAdapter mAdapter;
 
@@ -48,7 +55,17 @@ public class MainActivity extends AppCompatActivity implements FlingChiefListene
 
     private int[] mColors;
 
+    private String[] mNames;
+
+    private String[] mImages;
+
     private int mCount = 0;
+
+    FirebaseDatabase mDatabase;
+    FirebaseUser mUser;
+    DatabaseReference myRef;
+
+    private String mUserID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,10 +75,9 @@ public class MainActivity extends AppCompatActivity implements FlingChiefListene
         mColors  = getResources().getIntArray(R.array.cardsBackgroundColors);
         mItems = new ArrayList<>();
 
-        mItems.add(newItem());
-        mItems.add(newItem());
-        mItems.add(newItem());
         mAdapter = new DeckAdapter(this, mItems);
+        mNames = new String[87];
+        mImages = new String[87];
 
         RossDeckView mDeckLayout = (RossDeckView) findViewById(R.id.decklayout);
         mDeckLayout.setAdapter(mAdapter);
@@ -72,6 +88,36 @@ public class MainActivity extends AppCompatActivity implements FlingChiefListene
         mUpView = findViewById(R.id.up);
         mRightView = findViewById(R.id.right);
         mDownView = findViewById(R.id.down);
+
+        mDatabase = FirebaseDatabase.getInstance();
+        mUser = FirebaseAuth.getInstance().getCurrentUser();
+        mUserID = mUser.getUid();
+        myRef = mDatabase.getReference();
+
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                int index = 0;
+                for (DataSnapshot star : dataSnapshot.getChildren()) {
+                    if(!star.getKey().equals(mUserID)) {
+                        String starName = star.child("name").getValue(String.class);
+                        String starImage = star.child("image").getValue(String.class);
+                        mNames[Integer.valueOf(star.getKey())] = starName;
+                        mImages[Integer.valueOf(star.getKey())] = starImage;
+                    }
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        mItems.add(newItem());
+        mItems.add(newItem());
+        mItems.add(newItem());
     }
 
     @Override
@@ -122,17 +168,17 @@ public class MainActivity extends AppCompatActivity implements FlingChiefListene
     }
 
 
-    private Pair<String, Integer> newItem(){
+    private Pair<String, String> newItem(){
 
-        Pair<String, Integer> res = new Pair<>("Card" + Integer.toString(mCount), mColors[mCount]);
-        mCount = (mCount >= mColors.length - 1) ? 0 : mCount + 1;
+        Pair<String, String> res = new Pair<>(mNames[mCount], mImages[mCount]);
+        mCount = (mCount >= mNames.length - 1) ? 0 : mCount + 1;
         return res;
     }
 
 
     private void newItemWithDelay(int delay){
 
-        final Pair<String, Integer> res = newItem();
+        final Pair<String, String> res = newItem();
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
