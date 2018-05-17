@@ -16,10 +16,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -27,11 +29,6 @@ import com.google.firebase.storage.UploadTask;
 import java.util.ArrayList;
 
 public class LoginActivity extends AppCompatActivity {
-
-    //CONSTANT
-    static final int SELECT_IMAGE = 0;
-    private static final int REQUEST_TAKE_PHOTO = 11;
-    private static final String ID_PROFIL = "idprofil";
 
     //Firebase
     private FirebaseAuth mAuth;
@@ -47,6 +44,10 @@ public class LoginActivity extends AppCompatActivity {
     private EditText pass;
     private ProgressBar mProgressBarLoading;
 
+    Intent mGoToMainActivity;
+
+    private static final String ID_PROFIL = "idprofil";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,19 +59,17 @@ public class LoginActivity extends AppCompatActivity {
         pass = findViewById(R.id.et_Mdp);
         mProgressBarLoading = findViewById(R.id.progress_bar_load);
 
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mStorageRef = FirebaseStorage.getInstance().getReference();
+        mRef = mFirebaseDatabase.getReference();
+        mAuth = FirebaseAuth.getInstance();
+        mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
+        mGoToMainActivity = new Intent(LoginActivity.this, MainActivity.class);
+
         btCo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String condition1 = mail.getText().toString();
-                String condition2 = pass.getText().toString();
-                if (condition1.equals("") || condition2.equals("")){
-                    Toast.makeText(LoginActivity.this, "Veuillez renseigner les champs obligatoires", Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    Intent co = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(co);
-                }
+                signIn();
             }
         });
 
@@ -83,5 +82,48 @@ public class LoginActivity extends AppCompatActivity {
         });
 
 
+    }
+
+        /*
+    -------------------------------SignIn---------------------------------------------
+     */
+
+    public void signIn() {
+
+        String mailValue = mail.getText().toString().trim();
+        String passValue = pass.getText().toString().trim();
+        if (TextUtils.isEmpty(mailValue) || TextUtils.isEmpty(passValue)) {
+
+            Toast.makeText(LoginActivity.this, "Please, fill all fields !", Toast.LENGTH_SHORT).show();
+        } else {
+
+            mProgressBarLoading.setVisibility(View.VISIBLE);
+            mAuth.signInWithEmailAndPassword(mailValue, passValue).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+
+                    if (task.isSuccessful()) {
+                        mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
+                        String userID = mCurrentUser.getUid();
+
+                        mGoToMainActivity.putExtra(ID_PROFIL, userID);
+
+                        //String mailString = mail.getText().toString().trim();
+                        //SaveSharedPreference.setUserName(LoginActivity.this, mailString);
+
+                        LoginActivity.this.startActivity(mGoToMainActivity);
+                        mProgressBarLoading.setVisibility(View.GONE);
+
+                        finish();
+
+
+                    } else {
+                        mProgressBarLoading.setVisibility(View.GONE);
+                        Toast.makeText(LoginActivity.this, "Incorrect password or mail.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
     }
 }
