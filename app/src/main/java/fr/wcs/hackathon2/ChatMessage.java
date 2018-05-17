@@ -32,4 +32,12 @@ public class ChatMessage {
     public void setMessageUser(String messageUser) {
         this.messageUser = messageUser;
     }
+
+    public long getMessageTime() {
+        return messageTime;
+    }
+
+    public void setMessageTime(long messageTime) {
+        this.messageTime = messageTime;
+    }
 }
