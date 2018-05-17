@@ -3,8 +3,7 @@
     package="fr.wcs.hackathon2">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -28,7 +27,7 @@
         <activity android:name=".ChatFragment" />
         <activity android:name=".SearchFragment" />
         <activity android:name=".MainActivity" />
-        <activity android:name=".RegistrationActivity"/>
+        <activity android:name=".RegistrationActivity" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -39,8 +38,9 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
+        <activity android:name=".ProfileActivity" />
+        <activity android:name=".ChatActivity"></activity>
     </application>
-
-
 
 </manifest>
