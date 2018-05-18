@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.text.Layout;
 import android.util.Log;
 import android.util.Pair;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -89,14 +90,18 @@ public class MainActivity extends AppCompatActivity implements FlingChiefListene
 
 
         mLayout = (RelativeLayout) findViewById(R.id.layout_main);
+        mNames = new String[87];
+        mImages = new String[87];
 
+        Singleton singleton = Singleton.getsIntance();
+        mNames = singleton.getmNames();
+        mImages = singleton.getmImages();
 
         mColors  = getResources().getIntArray(R.array.cardsBackgroundColors);
         mItems = new ArrayList<>();
 
         mAdapter = new DeckAdapter(this, mItems);
-        mNames = new String[87];
-        mImages = new String[87];
+
 
         RossDeckView mDeckLayout = (RossDeckView) findViewById(R.id.decklayout);
         mDeckLayout.setAdapter(mAdapter);
@@ -143,8 +148,18 @@ public class MainActivity extends AppCompatActivity implements FlingChiefListene
     @Override
     public boolean onDismiss(@NonNull FlingChief.Direction direction, @NonNull View view) {
 
-        Toast.makeText(this, "Dismiss to " + direction, Toast.LENGTH_SHORT).show();
 
+        if (direction == FlingChief.Direction.RIGHT) {
+
+            Toast.makeText(this, "Like !", Toast.LENGTH_SHORT).show();
+            myRef.child(mUserID).child("Profil").child("like").child(mNames[mCount]).setValue(mCount);
+        }
+
+        if (direction == FlingChief.Direction.LEFT) {
+
+            Toast.makeText(this, "Dislike !", Toast.LENGTH_SHORT).show();
+            myRef.child(mUserID).child("Profil").child("dislike").child(mNames[mCount]).setValue(mCount);
+        }
 
 
         return true;

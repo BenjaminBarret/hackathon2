@@ -196,7 +196,7 @@ public class RegistrationActivity extends AppCompatActivity {
                         }
 
                         //SaveSharedPreference.setUserName(LoginActivity.this, mail);
-                        Intent intent = new Intent(RegistrationActivity.this, MainActivity.class);
+                        Intent intent = new Intent(RegistrationActivity.this, Splashscreen.class);
                         startActivity(intent);
                         finish();
 

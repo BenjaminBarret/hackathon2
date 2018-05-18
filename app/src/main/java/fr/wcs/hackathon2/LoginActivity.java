@@ -60,7 +60,7 @@ public class LoginActivity extends AppCompatActivity {
         mRef = mFirebaseDatabase.getReference();
         mAuth = FirebaseAuth.getInstance();
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
-        mGoToMainActivity = new Intent(LoginActivity.this, MainActivity.class);
+        mGoToMainActivity = new Intent(LoginActivity.this, Splashscreen.class);
 
         btCo.setOnClickListener(new View.OnClickListener() {
             @Override
