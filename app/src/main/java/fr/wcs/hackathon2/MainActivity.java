@@ -1,6 +1,7 @@
 package fr.wcs.hackathon2;
 
 import android.content.Context;
+
 import android.content.Intent;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -15,7 +16,11 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
+
 import android.widget.RelativeLayout;
+
+import android.view.Window;
+
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -82,7 +87,9 @@ public class MainActivity extends AppCompatActivity implements FlingChiefListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         mLayout = (RelativeLayout) findViewById(R.id.layout_main);
+
 
         mColors  = getResources().getIntArray(R.array.cardsBackgroundColors);
         mItems = new ArrayList<>();
