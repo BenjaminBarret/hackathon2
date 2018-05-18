@@ -1,5 +1,7 @@
 package fr.wcs.hackathon2;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -8,9 +10,12 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Layout;
 import android.util.Log;
 import android.util.Pair;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -36,6 +41,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.Inflater;
+
+import static android.view.Gravity.RIGHT;
 
 public class MainActivity extends AppCompatActivity implements FlingChiefListener.Actions, FlingChiefListener.Proximity {
 
@@ -65,12 +73,16 @@ public class MainActivity extends AppCompatActivity implements FlingChiefListene
     FirebaseUser mUser;
     DatabaseReference myRef;
 
+    private RelativeLayout mLayout;
+
     private String mUserID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mLayout = (RelativeLayout) findViewById(R.id.layout_main);
 
         mColors  = getResources().getIntArray(R.array.cardsBackgroundColors);
         mItems = new ArrayList<>();
@@ -99,13 +111,13 @@ public class MainActivity extends AppCompatActivity implements FlingChiefListene
             public void onDataChange(DataSnapshot dataSnapshot) {
                 int index = 0;
                 for (DataSnapshot star : dataSnapshot.getChildren()) {
-                    if(!star.getKey().equals(mUserID)) {
+                    if(star.getKey().equals(Integer.toString(index))) {
                         String starName = star.child("name").getValue(String.class);
                         String starImage = star.child("image").getValue(String.class);
                         mNames[Integer.valueOf(star.getKey())] = starName;
                         mImages[Integer.valueOf(star.getKey())] = starImage;
                     }
-
+                    index = index + 1;
                 }
 
             }
@@ -125,6 +137,9 @@ public class MainActivity extends AppCompatActivity implements FlingChiefListene
     public boolean onDismiss(@NonNull FlingChief.Direction direction, @NonNull View view) {
 
         Toast.makeText(this, "Dismiss to " + direction, Toast.LENGTH_SHORT).show();
+
+
+
         return true;
     }
 
@@ -149,13 +164,15 @@ public class MainActivity extends AppCompatActivity implements FlingChiefListene
 
     @Override
     public boolean onTapped() {
-        Toast.makeText(this, "Tapped", Toast.LENGTH_SHORT).show();
+        Intent goToChatActivity = new Intent(MainActivity.this,ChatActivity.class);
+        startActivity(goToChatActivity);
         return true;
     }
 
     @Override
     public boolean onDoubleTapped() {
-        Toast.makeText(this, "Double tapped", Toast.LENGTH_SHORT).show();
+        Intent goToProfileActivity = new Intent(MainActivity.this, ProfileActivity.class);
+        startActivity(goToProfileActivity);
         return true;
     }
 
@@ -168,10 +185,10 @@ public class MainActivity extends AppCompatActivity implements FlingChiefListene
         mDownView.setScaleX((1 - proximities[3] >= 0) ? 1 - proximities[3] : 0);
     }
 
-
     private Pair<String, String> newItem(){
 
         Pair<String, String> res = new Pair<>(mNames[mCount], mImages[mCount]);
+        mLayout.setBackgroundColor(mColors[mCount]);
         mCount = (mCount >= mNames.length - 1) ? 0 : mCount + 1;
         return res;
     }
