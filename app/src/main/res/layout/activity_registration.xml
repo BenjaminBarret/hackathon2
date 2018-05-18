@@ -27,7 +27,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginTop="40dp"
-                app:srcCompat="@mipmap/ic_launcher_round" />
+                app:srcCompat="@drawable/user" />
 
 
             <Spinner
@@ -84,19 +84,6 @@
                 app:layout_constraintRight_toRightOf="parent" />
 
             <EditText
-                android:id="@+id/etPass"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:ems="10"
-                android:hint="Mot de Passe"
-                android:inputType="textVisiblePassword"
-                app:layout_constraintBottom_toTopOf="@+id/btCo"
-                app:layout_constraintHorizontal_bias="0.502"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent" />
-
-            <EditText
                 android:id="@+id/etMailAdress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -105,6 +92,19 @@
                 android:hint="Email"
                 android:inputType="textEmailAddress"
                 app:layout_constraintBottom_toTopOf="@+id/etCity"
+                app:layout_constraintHorizontal_bias="0.502"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent" />
+
+            <EditText
+                android:id="@+id/etPass"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:ems="10"
+                android:hint="Mot de Passe"
+                android:inputType="textVisiblePassword"
+                app:layout_constraintBottom_toTopOf="@+id/btCo"
                 app:layout_constraintHorizontal_bias="0.502"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent" />
