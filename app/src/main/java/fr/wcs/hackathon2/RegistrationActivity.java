@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -75,6 +76,7 @@ public class RegistrationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
+
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mStorageRef = FirebaseStorage.getInstance().getReference();
@@ -207,7 +209,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
     public void initWidgets() {
 
-        btInscript = findViewById(R.id.btInscription);
+        btInscript = findViewById(R.id.btCo);
         name = findViewById(R.id.etLast);
         prenom = findViewById(R.id.etFirst);
         mail = findViewById(R.id.etMailAdress);

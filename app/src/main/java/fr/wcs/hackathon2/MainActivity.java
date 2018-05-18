@@ -1,5 +1,6 @@
 package fr.wcs.hackathon2;
 
+import android.content.Intent;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
+import android.view.Window;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -71,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements FlingChiefListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         mColors  = getResources().getIntArray(R.array.cardsBackgroundColors);
         mItems = new ArrayList<>();
@@ -150,6 +153,8 @@ public class MainActivity extends AppCompatActivity implements FlingChiefListene
     @Override
     public boolean onTapped() {
         Toast.makeText(this, "Tapped", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent (MainActivity.this, ChatActivity.class);
+        startActivity(intent);
         return true;
     }
 

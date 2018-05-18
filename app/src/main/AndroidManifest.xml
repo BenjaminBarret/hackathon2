@@ -23,9 +23,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AcceuilFragment" />
-        <activity android:name=".ChatFragment" />
-        <activity android:name=".SearchFragment" />
+
+        <activity android:name=".ChatActivity">
+
+        </activity>
+
+
         <activity android:name=".MainActivity" />
         <activity android:name=".RegistrationActivity" />
 
@@ -40,7 +43,7 @@
         </provider>
 
         <activity android:name=".ProfileActivity" />
-        <activity android:name=".ChatActivity"></activity>
+
     </application>
 
 </manifest>
